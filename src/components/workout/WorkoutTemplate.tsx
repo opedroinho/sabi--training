@@ -75,6 +75,49 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
     })
   }
 
+  // ── training mutation helpers ──
+  const TRAINING_COLORS = ['#c9a050', '#4da6c8', '#4dc87a', '#c84da6', '#c84d4d', '#a64dc8', '#c8a44d', '#4dc8c8']
+  const TRAINING_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+  function addTraining() {
+    const idx = data.trainings.length
+    const letter = TRAINING_LETTERS[idx] ?? String(idx + 1)
+    const color = TRAINING_COLORS[idx % TRAINING_COLORS.length]
+    const newTraining = {
+      label: `TREINO ${letter}`,
+      name: '',
+      color,
+      exercises: Array.from({ length: 5 }, (_, i) => ({
+        id: `${letter.toLowerCase()}${Date.now()}${i}`,
+        name: '', series: '', reps: '', cadence: '', rest: '', rir: '', focus: '',
+      })),
+    }
+    setData({ trainings: [...data.trainings, newTraining] })
+  }
+
+  function deleteTraining(ti: number) {
+    if (!confirm(`Remover "${data.trainings[ti].label}"?`)) return
+    setData({ trainings: data.trainings.filter((_, i) => i !== ti) })
+  }
+
+  function addExercise(ti: number) {
+    const ts = data.trainings.map((t, i) => {
+      if (i !== ti) return t
+      const letter = t.label.split(' ')[1]?.toLowerCase() ?? 't'
+      const newEx = { id: `${letter}${Date.now()}`, name: '', series: '', reps: '', cadence: '', rest: '', rir: '', focus: '' }
+      return { ...t, exercises: [...t.exercises, newEx] }
+    })
+    setData({ trainings: ts })
+  }
+
+  function deleteExercise(ti: number, ei: number) {
+    const ts = data.trainings.map((t, i) => {
+      if (i !== ti) return t
+      return { ...t, exercises: t.exercises.filter((_, j) => j !== ei) }
+    })
+    setData({ trainings: ts })
+  }
+
   // ── week log helpers ──
   function getWeek(key: string) {
     const empty = { weight: '', measurements: '', photos: '', perception: '', energy: '', sleep: '', notes: '' }
@@ -195,12 +238,13 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
       {/* ── TRAINING SECTIONS ── */}
       {data.trainings.map((training, ti) => (
         <div key={ti} style={{ background: '#111', border: '1px solid #333', borderRadius: 6, marginBottom: 12, overflow: 'hidden' }}>
+          {/* header */}
           <div style={{
             display: 'flex', alignItems: 'center', gap: 10, padding: '8px 14px',
-            background: ti === 0 ? '#2a1a08' : ti === 1 ? '#082028' : '#082008',
+            background: `${training.color}18`,
             borderBottom: `2px solid ${training.color}`,
           }}>
-            <MI name={ti === 0 ? 'fitness_center' : ti === 1 ? 'sports' : 'directions_run'} style={{ fontSize: 22, color: training.color }} />
+            <MI name="fitness_center" style={{ fontSize: 22, color: training.color }} />
             <div>
               <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: 2, color: '#888' }}>{training.label}</div>
               {readOnly
@@ -210,8 +254,18 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
               }
             </div>
             <span style={{ marginLeft: 'auto', fontSize: 8.5, color: '#888', letterSpacing: 1, fontWeight: 700 }}>REGISTRO DO ALUNO ▶</span>
+            {!readOnly && (
+              <button
+                onClick={() => deleteTraining(ti)}
+                title="Remover treino"
+                style={{ background: 'transparent', border: '1px solid #555', color: '#888', borderRadius: 4, padding: '3px 8px', fontSize: 10, cursor: 'pointer', marginLeft: 8, display: 'flex', alignItems: 'center', gap: 3 }}
+              >
+                <MI name="delete" style={{ fontSize: 13, color: '#e05a5a' }} /> REMOVER TREINO
+              </button>
+            )}
           </div>
 
+          {/* exercise table */}
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 10 }}>
               <thead>
@@ -221,6 +275,7 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
                       {h}
                     </th>
                   ))}
+                  {!readOnly && <th style={{ ...thStyle, width: 28 }} />}
                 </tr>
               </thead>
               <tbody>
@@ -249,14 +304,47 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
                       <td style={{ ...cell, textAlign: 'left', color: '#888', fontSize: 9 }}>
                         <FI value={ex.focus} onChange={v => { const ts = [...data.trainings]; ts[ti].exercises[ei] = { ...ex, focus: v }; setData({ trainings: ts }) }} readOnly={readOnly} placeholder="Foco" />
                       </td>
+                      {!readOnly && (
+                        <td style={{ ...cell, textAlign: 'center', width: 28 }}>
+                          <button
+                            onClick={() => deleteExercise(ti, ei)}
+                            title="Remover linha"
+                            style={{ background: 'transparent', border: 'none', color: '#555', cursor: 'pointer', padding: 2, lineHeight: 1, fontSize: 14 }}
+                          >
+                            <MI name="remove_circle_outline" style={{ fontSize: 15, color: '#e05a5a' }} />
+                          </button>
+                        </td>
+                      )}
                     </tr>
                   )
                 })}
               </tbody>
             </table>
           </div>
+
+          {/* add row button */}
+          {!readOnly && (
+            <div style={{ padding: '6px 12px', borderTop: '1px solid #1e1e1e' }}>
+              <button
+                onClick={() => addExercise(ti)}
+                style={{ background: 'transparent', border: `1px dashed ${training.color}`, color: training.color, borderRadius: 4, padding: '4px 12px', fontSize: 10, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
+              >
+                <MI name="add" style={{ fontSize: 14, color: training.color }} /> ADICIONAR EXERCÍCIO
+              </button>
+            </div>
+          )}
         </div>
       ))}
+
+      {/* add training button */}
+      {!readOnly && (
+        <button
+          onClick={addTraining}
+          style={{ width: '100%', marginBottom: 12, background: 'transparent', border: `2px dashed ${gold}`, color: gold, borderRadius: 6, padding: '10px', fontSize: 11, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, letterSpacing: 1 }}
+        >
+          <MI name="add_circle_outline" style={{ fontSize: 18, color: gold }} /> ADICIONAR TREINO
+        </button>
+      )}
 
       {/* ── BOTTOM 4-COL ── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 12 }}>
