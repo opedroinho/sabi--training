@@ -171,7 +171,7 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
       </div>
 
       {/* ── TOP 3-COL ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 12 }}>
+      <div className="ws-grid-3">
         {/* 1. Dados do Aluno */}
         <Card num="1" title="DADOS DO ALUNO">
           {[
@@ -266,12 +266,12 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
           </div>
 
           {/* exercise table */}
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 10 }}>
+          <div className="ws-table-wrap">
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 10, minWidth: 560 }}>
               <thead>
                 <tr>
                   {['#', 'EXERCÍCIO', 'SÉRIES', 'REPS', 'CADÊNCIA', 'DESCANSO', 'RIR', 'CARGA (KG)', 'REPS REAIS', 'ESFORÇO (0-10)', 'EXECUÇÃO / FOCO'].map((h, hi) => (
-                    <th key={hi} style={{ ...thStyle, textAlign: hi <= 1 || hi === 10 ? 'left' : 'center', borderLeft: hi === 7 ? `2px solid ${gold}` : undefined, background: hi >= 7 && hi <= 9 ? '#1a1209' : '#252525' }}>
+                    <th key={hi} className={hi === 0 ? 'ws-sticky-num' : hi === 1 ? 'ws-sticky-name' : ''} style={{ ...thStyle, textAlign: hi <= 1 || hi === 10 ? 'left' : 'center', borderLeft: hi === 7 ? `2px solid ${gold}` : undefined, background: hi >= 7 && hi <= 9 ? '#1a1209' : '#252525' }}>
                       {h}
                     </th>
                   ))}
@@ -281,10 +281,11 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
               <tbody>
                 {training.exercises.map((ex, ei) => {
                   const rec = getExRec(ex.id)
+                  const rowBg = ei % 2 === 0 ? '#111' : '#131313'
                   return (
                     <tr key={ex.id} style={{ background: ei % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.01)' }}>
-                      <td style={{ ...cell, color: gold, fontWeight: 700, textAlign: 'center', width: 22 }}>{ei + 1}</td>
-                      <td style={{ ...cell, minWidth: 140 }}>
+                      <td className="ws-sticky-num-row" style={{ ...cell, color: gold, fontWeight: 700, textAlign: 'center', width: 22, background: rowBg }}>{ei + 1}</td>
+                      <td className="ws-sticky-name-row" style={{ ...cell, minWidth: 140, background: rowBg }}>
                         <FI value={ex.name} onChange={v => { const ts = [...data.trainings]; ts[ti].exercises[ei] = { ...ex, name: v }; setData({ trainings: ts }) }} readOnly={readOnly} placeholder="Exercício" />
                       </td>
                       {(['series', 'reps', 'cadence', 'rest', 'rir'] as const).map(f => (
@@ -347,7 +348,7 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
       )}
 
       {/* ── BOTTOM 4-COL ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 12 }}>
+      <div className="ws-grid-4">
         {/* Progressão */}
         <Card icon="trending_up" title="PROGRESSÃO">
           {data.progression.map((item, i) => (
@@ -398,8 +399,8 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
         <div style={{ background: gold, color: '#000', fontWeight: 900, fontSize: 10, letterSpacing: 1, padding: '6px 12px', display: 'flex', alignItems: 'center', gap: 6 }}>
           <NumBadge n="8" /> REGISTRO SEMANAL
         </div>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 10 }}>
+        <div className="ws-table-wrap">
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 10, minWidth: 560 }}>
             <thead>
               <tr>
                 {['SEMANA', 'PESO (KG)', 'MEDIDAS (CM)', 'FOTOS', 'PERCEPÇÃO (0-10)', 'ENERGIA (0-10)', 'SONO (0-10)', 'OBSERVAÇÕES'].map((h, i) => (

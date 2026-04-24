@@ -60,6 +60,32 @@ body {
 }
 .record-input::placeholder { color: #555; }
 
+/* ── Responsive layout helpers ── */
+.ws-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.ws-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px; }
+.ws-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+@media (max-width: 860px) {
+  .ws-grid-3 { grid-template-columns: 1fr; }
+  .ws-grid-4 { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+  .ws-grid-4 { grid-template-columns: 1fr; }
+}
+
+/* Sticky first two columns in exercise tables */
+.ws-sticky-num {
+  position: sticky; left: 0; z-index: 1;
+  background: #252525;
+}
+.ws-sticky-name {
+  position: sticky; left: 28px; z-index: 1;
+  background: #252525;
+  border-right: 2px solid #333 !important;
+}
+.ws-sticky-num-row { position: sticky; left: 0; z-index: 1; }
+.ws-sticky-name-row { position: sticky; left: 28px; z-index: 1; border-right: 2px solid #333 !important; }
+
 @media print {
   #toolbar, #save-bar { display: none !important; }
   body { background: #111 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
