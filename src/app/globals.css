@@ -60,14 +60,6 @@ body {
 }
 .record-input::placeholder { color: #555; }
 
-/* Student responsive: cards on mobile, table on desktop */
-.student-cards { display: block; }
-.student-table { display: none; }
-@media (min-width: 768px) {
-  .student-cards { display: none; }
-  .student-table { display: block; }
-}
-
 @media print {
   #toolbar, #save-bar { display: none !important; }
   body { background: #111 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
