@@ -141,13 +141,12 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
     <div style={{ fontFamily: 'Segoe UI, Arial, sans-serif', fontSize: 11, color: '#e8e8e8', lineHeight: 1.4 }}>
 
       {/* ── HEADER ── */}
-      <div style={{
+      <div className="ws-header" style={{
         background: '#111', border: '1px solid #c9a050', borderRadius: 6,
-        padding: '14px 20px', display: 'grid', gridTemplateColumns: 'auto 1fr auto',
-        alignItems: 'center', gap: 16, marginBottom: 14,
+        padding: '14px 20px', marginBottom: 14,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ fontSize: 36, fontWeight: 900, color: gold, border: `2px solid ${gold}`, padding: '4px 10px', borderRadius: 4, letterSpacing: -2 }}>WS</div>
+          <div style={{ fontSize: 36, fontWeight: 900, color: gold, border: `2px solid ${gold}`, padding: '4px 10px', borderRadius: 4, letterSpacing: -2, flexShrink: 0 }}>WS</div>
           <div>
             <div style={{ color: gold, fontSize: 11, fontWeight: 700, letterSpacing: 1.5 }}>WILSON SABIÁ</div>
             <div style={{ color: '#888', fontSize: 9, letterSpacing: 2 }}>PERSONAL TRAINER</div>
@@ -161,7 +160,7 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
             ESTRATÉGIA • PERFORMANCE • RESULTADOS
           </div>
         </div>
-        <div style={{ textAlign: 'right' }}>
+        <div className="ws-header-right" style={{ textAlign: 'right' }}>
           <MI name="fitness_center" style={{ fontSize: 30, color: gold }} />
           <div style={{ fontSize: 10, color: '#e0bc74', fontStyle: 'italic', fontWeight: 600, lineHeight: 1.4 }}>
             "DISCIPLINA HOJE,<br />RESULTADOS AMANHÃ."
@@ -271,7 +270,7 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
               <thead>
                 <tr>
                   {['#', 'EXERCÍCIO', 'SÉRIES', 'REPS', 'CADÊNCIA', 'DESCANSO', 'RIR', 'CARGA (KG)', 'REPS REAIS', 'ESFORÇO (0-10)', 'EXECUÇÃO / FOCO'].map((h, hi) => (
-                    <th key={hi} className={hi === 0 ? 'ws-sticky-num' : hi === 1 ? 'ws-sticky-name' : ''} style={{ ...thStyle, textAlign: hi <= 1 || hi === 10 ? 'left' : 'center', borderLeft: hi === 7 ? `2px solid ${gold}` : undefined, background: hi >= 7 && hi <= 9 ? '#1a1209' : '#252525' }}>
+                    <th key={hi} className={hi === 1 ? 'ws-sticky-name' : ''} style={{ ...thStyle, textAlign: hi <= 1 || hi === 10 ? 'left' : 'center', borderLeft: hi === 7 ? `2px solid ${gold}` : undefined, background: hi >= 7 && hi <= 9 ? '#1a1209' : '#252525' }}>
                       {h}
                     </th>
                   ))}
@@ -284,7 +283,7 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
                   const rowBg = ei % 2 === 0 ? '#111' : '#131313'
                   return (
                     <tr key={ex.id} style={{ background: ei % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.01)' }}>
-                      <td className="ws-sticky-num-row" style={{ ...cell, color: gold, fontWeight: 700, textAlign: 'center', width: 22, background: rowBg }}>{ei + 1}</td>
+                      <td style={{ ...cell, color: gold, fontWeight: 700, textAlign: 'center', width: 22 }}>{ei + 1}</td>
                       <td className="ws-sticky-name-row" style={{ ...cell, minWidth: 140, background: rowBg }}>
                         <FI value={ex.name} onChange={v => { const ts = [...data.trainings]; ts[ti].exercises[ei] = { ...ex, name: v }; setData({ trainings: ts }) }} readOnly={readOnly} placeholder="Exercício" />
                       </td>
@@ -449,13 +448,22 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
       </div>
 
       {/* ── FOOTER ── */}
-      <div style={{ background: '#111', border: '1px solid #333', borderRadius: 6, padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, fontSize: 10, color: '#888' }}>
-          <><MI name="phone" style={{ color: gold, fontSize: 13 }} /><FI value={data.footer.phone} onChange={v => setData({ footer: { ...data.footer, phone: v } })} readOnly={readOnly} style={{ width: 120, borderBottomColor: '#333' }} /></>
-          <><MI name="photo_camera" style={{ color: gold, fontSize: 13 }} /><FI value={data.footer.instagram} onChange={v => setData({ footer: { ...data.footer, instagram: v } })} readOnly={readOnly} style={{ width: 130, borderBottomColor: '#333' }} /></>
-          <><MI name="email" style={{ color: gold, fontSize: 13 }} /><FI value={data.footer.email} onChange={v => setData({ footer: { ...data.footer, email: v } })} readOnly={readOnly} style={{ width: 180, borderBottomColor: '#333' }} /></>
+      <div className="ws-footer" style={{ background: '#111', border: '1px solid #333', borderRadius: 6, padding: '10px 16px' }}>
+        <div className="ws-footer-contacts" style={{ fontSize: 10, color: '#888' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+            <MI name="phone" style={{ color: gold, fontSize: 13 }} />
+            <FI value={data.footer.phone} onChange={v => setData({ footer: { ...data.footer, phone: v } })} readOnly={readOnly} style={{ width: 120, borderBottomColor: '#333' }} />
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+            <MI name="photo_camera" style={{ color: gold, fontSize: 13 }} />
+            <FI value={data.footer.instagram} onChange={v => setData({ footer: { ...data.footer, instagram: v } })} readOnly={readOnly} style={{ width: 130, borderBottomColor: '#333' }} />
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+            <MI name="email" style={{ color: gold, fontSize: 13 }} />
+            <FI value={data.footer.email} onChange={v => setData({ footer: { ...data.footer, email: v } })} readOnly={readOnly} style={{ width: 180, borderBottomColor: '#333' }} />
+          </div>
         </div>
-        <div style={{ color: gold, fontWeight: 900, fontSize: 11, letterSpacing: 2 }}>
+        <div className="ws-footer-motto">
           DISCIPLINA <span style={{ color: '#888' }}>•</span> FOCO <span style={{ color: '#888' }}>•</span> CONSTÂNCIA <span style={{ color: '#888' }}>•</span> RESULTADOS
         </div>
       </div>

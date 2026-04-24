@@ -60,31 +60,36 @@ body {
 }
 .record-input::placeholder { color: #555; }
 
-/* ── Responsive layout helpers ── */
+/* ── Responsive grid helpers ── */
 .ws-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
 .ws-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px; }
 .ws-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* Sticky exercise name only — no gap between columns */
+.ws-sticky-name     { position: sticky; left: 0; z-index: 2; background: #252525; border-right: 2px solid #444 !important; }
+.ws-sticky-name-row { position: sticky; left: 0; z-index: 1; border-right: 2px solid #444 !important; }
+
+/* Planilha header */
+.ws-header { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px; }
+
+/* Planilha footer */
+.ws-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.ws-footer-contacts { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.ws-footer-motto { color: #c9a050; font-weight: 900; font-size: 11px; letter-spacing: 2px; flex-shrink: 0; }
 
 @media (max-width: 860px) {
   .ws-grid-3 { grid-template-columns: 1fr; }
   .ws-grid-4 { grid-template-columns: 1fr 1fr; }
 }
+@media (max-width: 640px) {
+  .ws-header { grid-template-columns: 1fr; gap: 10px; }
+  .ws-header-right { display: none; }
+  .ws-footer { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .ws-footer-motto { font-size: 9px; letter-spacing: 1px; }
+}
 @media (max-width: 480px) {
   .ws-grid-4 { grid-template-columns: 1fr; }
 }
-
-/* Sticky first two columns in exercise tables */
-.ws-sticky-num {
-  position: sticky; left: 0; z-index: 1;
-  background: #252525;
-}
-.ws-sticky-name {
-  position: sticky; left: 28px; z-index: 1;
-  background: #252525;
-  border-right: 2px solid #333 !important;
-}
-.ws-sticky-num-row { position: sticky; left: 0; z-index: 1; }
-.ws-sticky-name-row { position: sticky; left: 28px; z-index: 1; border-right: 2px solid #333 !important; }
 
 @media print {
   #toolbar, #save-bar { display: none !important; }
