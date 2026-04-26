@@ -1,13 +1,14 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { StudentWorkoutView } from '@/components/student/StudentWorkoutView'
+import { LogoutButton } from '@/components/LogoutButton'
 
 export default async function StudentPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   const [{ data: profile }, { data: assignment }] = await Promise.all([
-    supabase.from('profiles').select('name').eq('id', user!.id).single(),
+    supabase.from('profiles').select('name, status').eq('id', user!.id).single(),
     supabase
       .from('assignments')
       .select('id, template_id, current_version, pending_version')
@@ -15,33 +16,65 @@ export default async function StudentPage() {
       .single(),
   ])
 
+  // ── Inactive student ──────────────────────────────────────────────────────
+  if (profile?.status === 'inactive') {
+    return (
+      <div style={{ minHeight: '100vh', background: '#0a0a0a', display: 'flex', flexDirection: 'column' }}>
+        <div style={{
+          background: '#111', borderBottom: '2px solid #333',
+          padding: '10px 20px', display: 'flex', alignItems: 'center', gap: 10,
+        }}>
+          <span style={{ fontSize: 18, fontWeight: 900, color: '#555', border: '2px solid #333', padding: '2px 8px', borderRadius: 4, letterSpacing: -1 }}>WS</span>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: '#555' }}>WILSON SABIÁ</div>
+            <div style={{ fontSize: 10, color: '#444' }}>{profile?.name}</div>
+          </div>
+          <LogoutButton />
+        </div>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
+          <div style={{ textAlign: 'center', maxWidth: 360 }}>
+            <span className="material-icons-outlined" style={{ fontSize: 52, color: '#333', marginBottom: 16, display: 'block' }}>
+              pause_circle
+            </span>
+            <div style={{ fontSize: 14, fontWeight: 900, color: '#555', letterSpacing: 2, marginBottom: 12 }}>
+              CONTA PAUSADA
+            </div>
+            <p style={{ fontSize: 13, color: '#444', lineHeight: 1.6, marginBottom: 20 }}>
+              Seu acesso ao treino está temporariamente suspenso. Entre em contato com Wilson Sabiá para mais informações.
+            </p>
+            <a
+              href="https://wa.me"
+              style={{ fontSize: 11, color: '#555', textDecoration: 'underline' }}
+            >
+              Falar com o Wilson
+            </a>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // ── No assignment yet ─────────────────────────────────────────────────────
   if (!assignment) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0a0a0a' }}>
-        <div className="text-center p-8 rounded-lg" style={{ border: '1px solid #333', background: '#111' }}>
-          <span className="material-icons-outlined text-5xl mb-4 block" style={{ color: '#c9a050' }}>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0a' }}>
+        <div style={{ textAlign: 'center', padding: '40px', background: '#111', borderRadius: 10, border: '1px solid #222', maxWidth: 320 }}>
+          <span className="material-icons-outlined" style={{ fontSize: 48, color: '#c9a050', marginBottom: 14, display: 'block' }}>
             fitness_center
           </span>
-          <p className="font-bold mb-1" style={{ color: '#c9a050' }}>Nenhum treino atribuído</p>
-          <p className="text-sm" style={{ color: '#888' }}>
-            Aguarde seu personal atribuir um treino para você.
+          <p style={{ fontWeight: 700, color: '#c9a050', marginBottom: 8 }}>Nenhum treino atribuído</p>
+          <p style={{ fontSize: 12, color: '#666' }}>
+            Aguarde o Wilson atribuir um treino para você.
           </p>
         </div>
       </div>
     )
   }
 
+  // ── Active student with assignment ────────────────────────────────────────
   const [{ data: template }, { data: record }] = await Promise.all([
-    supabase
-      .from('templates')
-      .select('id, name, version, data')
-      .eq('id', assignment.template_id)
-      .single(),
-    supabase
-      .from('student_records')
-      .select('data')
-      .eq('assignment_id', assignment.id)
-      .single(),
+    supabase.from('templates').select('id, name, version, data').eq('id', assignment.template_id).single(),
+    supabase.from('student_records').select('data').eq('assignment_id', assignment.id).single(),
   ])
 
   if (!template) redirect('/student')

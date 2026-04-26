@@ -1,17 +1,19 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { TemplateEditor } from '@/components/trainer/TemplateEditor'
 import { DEFAULT_TEMPLATE } from '@/lib/types'
 
-export default async function NewTemplatePage() {
+interface Props { searchParams: Promise<{ student?: string }> }
+
+export default async function NewTemplatePage({ searchParams }: Props) {
+  const { student: studentId } = await searchParams
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Create a blank template row and redirect to its edit page
   const { data: template, error } = await supabase
     .from('templates')
     .insert({
       trainer_id: user!.id,
+      student_id: studentId ?? null,
       name: 'Novo Treino',
       version: 1,
       data: DEFAULT_TEMPLATE,
@@ -19,7 +21,7 @@ export default async function NewTemplatePage() {
     .select()
     .single()
 
-  if (error || !template) redirect('/trainer')
+  if (error || !template) redirect(studentId ? `/trainer/student/${studentId}` : '/trainer')
 
-  redirect(`/trainer/template/${template.id}`)
+  redirect(`/trainer/template/${template.id}${studentId ? `?student=${studentId}` : ''}`)
 }
