@@ -6,6 +6,7 @@ import { TemplateData, StudentRecordData, TrainingSection } from '@/lib/types'
 import { createClient } from '@/lib/supabase/client'
 import { LogoutButton } from '@/components/LogoutButton'
 import { InstallPwaButton } from '@/components/InstallPwaButton'
+import { SabiaWordmark } from '@/components/SabiaWordmark'
 
 const gold = '#c9a050'
 const EMPTY_RECORD: StudentRecordData = { exercises: {}, weeklyLog: {} }
@@ -129,7 +130,7 @@ export function StudentWorkoutView({ studentName, assignment, template, initialR
               <span className="material-icons-outlined" style={{ fontSize: 20 }}>arrow_back</span>
             </button>
           ) : (
-            <img src="/sabia-logo.svg" alt="Wilson Sabiá" style={{ height: 30, flexShrink: 0 }} />
+            <SabiaWordmark height={30} style={{ flexShrink: 0 }} />
           )}
 
           <div style={{ flex: 1, minWidth: 0 }}>

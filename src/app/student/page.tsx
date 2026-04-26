@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { StudentWorkoutView } from '@/components/student/StudentWorkoutView'
 import { LogoutButton } from '@/components/LogoutButton'
+import { SabiaWordmark } from '@/components/SabiaWordmark'
 
 export default async function StudentPage() {
   const supabase = await createClient()
@@ -24,7 +25,7 @@ export default async function StudentPage() {
           background: '#111', borderBottom: '2px solid #333',
           padding: '10px 20px', display: 'flex', alignItems: 'center', gap: 10,
         }}>
-          <img src="/sabia-logo.svg" alt="Wilson Sabiá" style={{ height: 30, flexShrink: 0, opacity: 0.4 }} />
+          <SabiaWordmark height={30} style={{ flexShrink: 0, opacity: 0.4 }} />
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 10, color: '#444' }}>{profile?.name}</div>
           </div>

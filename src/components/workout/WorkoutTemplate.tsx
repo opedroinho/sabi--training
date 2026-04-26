@@ -1,6 +1,7 @@
 'use client'
 
 import { TemplateData, StudentRecordData, Exercise } from '@/lib/types'
+import { SabiaWordmark } from '@/components/SabiaWordmark'
 
 // ── small helpers ──────────────────────────────────────────────────────────
 function FI({
@@ -146,7 +147,7 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
         padding: '14px 20px', marginBottom: 14,
       }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <img src="/sabia-logo.svg" alt="Wilson Sabiá Personal Trainer" style={{ height: 52, flexShrink: 0 }} />
+          <SabiaWordmark height={52} style={{ flexShrink: 0 }} />
         </div>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: 22, fontWeight: 900, color: gold, letterSpacing: 3, lineHeight: 1.1 }}>
