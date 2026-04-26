@@ -50,3 +50,47 @@ export async function POST(req: Request) {
 
   return NextResponse.json({ id: newUser.user.id, name, email })
 }
+
+export async function DELETE(req: Request) {
+  // Verify caller is a trainer
+  const supabase = await createServerClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  if (profile?.role !== 'trainer')
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+
+  const { studentId } = await req.json()
+  if (!studentId) return NextResponse.json({ error: 'Missing studentId' }, { status: 400 })
+
+  const admin = adminClient()
+
+  // Delete all student_records for this student's assignments
+  const { data: studentAssignments } = await admin
+    .from('assignments')
+    .select('id')
+    .eq('student_id', studentId)
+
+  if (studentAssignments?.length) {
+    const assignmentIds = studentAssignments.map(a => a.id)
+    await admin.from('student_records').delete().in('assignment_id', assignmentIds)
+  }
+
+  // Delete assignments
+  await admin.from('assignments').delete().eq('student_id', studentId)
+
+  // Delete profile (templates with student_id → NULL via ON DELETE SET NULL)
+  await admin.from('profiles').delete().eq('id', studentId)
+
+  // Delete auth user
+  const { error } = await admin.auth.admin.deleteUser(studentId)
+  if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+
+  return NextResponse.json({ ok: true })
+}

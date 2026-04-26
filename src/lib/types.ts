@@ -4,6 +4,7 @@ export interface Profile {
   id: string
   name: string
   role: Role
+  status: 'active' | 'inactive'
   created_at: string
 }
 

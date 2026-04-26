@@ -12,9 +12,10 @@ const EMPTY_RECORD: StudentRecordData = { exercises: {}, weeklyLog: {} }
 interface Props {
   template: { id: string; name: string; version: number; data: TemplateData }
   hasAssignments: boolean
+  backHref?: string
 }
 
-export function TemplateEditor({ template, hasAssignments }: Props) {
+export function TemplateEditor({ template, hasAssignments, backHref = '/trainer' }: Props) {
   const router = useRouter()
   const [name, setName] = useState(template.name)
   const [data, setData] = useState<TemplateData>(template.data)
@@ -66,11 +67,11 @@ export function TemplateEditor({ template, hasAssignments }: Props) {
         padding: '8px 16px', display: 'flex', alignItems: 'center', gap: 10,
       }}>
         <Link
-          href="/trainer"
+          href={backHref}
           style={{ color: '#888', fontSize: 11, display: 'flex', alignItems: 'center', gap: 4, textDecoration: 'none' }}
         >
           <span className="material-icons-outlined" style={{ fontSize: 14 }}>arrow_back</span>
-          Dashboard
+          {backHref.includes('/student/') ? 'Aluno' : 'Dashboard'}
         </Link>
         <span style={{ color: '#444' }}>|</span>
 
