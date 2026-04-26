@@ -89,7 +89,7 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
       color,
       exercises: Array.from({ length: 5 }, (_, i) => ({
         id: `${letter.toLowerCase()}${Date.now()}${i}`,
-        name: '', series: '', reps: '', cadence: '', rest: '', rir: '', focus: '',
+        name: '', series: '', reps: '', rest: '', focus: '',
       })),
     }
     setData({ trainings: [...data.trainings, newTraining] })
@@ -104,7 +104,7 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
     const ts = data.trainings.map((t, i) => {
       if (i !== ti) return t
       const letter = t.label.split(' ')[1]?.toLowerCase() ?? 't'
-      const newEx = { id: `${letter}${Date.now()}`, name: '', series: '', reps: '', cadence: '', rest: '', rir: '', focus: '' }
+      const newEx: Exercise = { id: `${letter}${Date.now()}`, name: '', series: '', reps: '', rest: '', focus: '' }
       return { ...t, exercises: [...t.exercises, newEx] }
     })
     setData({ trainings: ts })
@@ -120,7 +120,7 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
 
   // ── week log helpers ──
   function getWeek(key: string) {
-    const empty = { weight: '', measurements: '', photos: '', perception: '', energy: '', sleep: '', notes: '' }
+    const empty = { weight: '', measurements: '', perception: '', energy: '', sleep: '', notes: '' }
     return record.weeklyLog?.[key] ?? empty
   }
   function setWeek(key: string, field: string, val: string) {
@@ -169,8 +169,9 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
         </div>
       </div>
 
-      {/* ── TOP 3-COL ── */}
-      <div className="ws-grid-3">
+      {/* ── TOP 2-COL: Dados do Aluno + Estrutura do Treino ── */}
+      <div className="ws-grid-2" style={{ marginBottom: 14 }}>
+
         {/* 1. Dados do Aluno */}
         <Card num="1" title="DADOS DO ALUNO">
           {[
@@ -178,15 +179,14 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
             { label: 'Idade:', key: 'age', placeholder: 'Idade' },
             { label: 'Altura / Peso:', key: 'heightWeight', placeholder: 'Altura / Peso' },
             { label: 'Objetivo principal:', key: 'mainGoal', placeholder: 'Objetivo' },
-            { label: 'Nível:', key: 'level', placeholder: 'Nível' },
-            { label: 'Tempo de treino:', key: 'trainingTime', placeholder: 'Tempo de treino' },
+            { label: 'Nível:', key: 'level', placeholder: 'Iniciante / Intermediário / Avançado' },
             { label: 'Lesões / dores:', key: 'injuries', placeholder: 'Lesões ou dores' },
-            { label: 'Dias disponíveis:', key: 'availableDays', placeholder: 'Dias disponíveis' },
-            { label: 'Tempo por treino:', key: 'sessionTime', placeholder: 'Duração do treino' },
+            { label: 'Dias disponíveis:', key: 'availableDays', placeholder: 'Ex: Seg, Ter, Qui, Sex' },
+            { label: 'Tempo por treino:', key: 'sessionTime', placeholder: 'Ex: 60 min' },
           ].map(({ label, key, placeholder }) => (
             <FieldRow key={key} label={label}>
               <FI
-                value={(data.studentInfo as Record<string, string>)[key]}
+                value={(data.studentInfo as Record<string, string>)[key] ?? ''}
                 onChange={v => setData({ studentInfo: { ...data.studentInfo, [key]: v } })}
                 placeholder={placeholder}
                 readOnly={readOnly}
@@ -198,40 +198,22 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
         {/* 2. Estrutura do Treino */}
         <Card num="2" title="ESTRUTURA DO TREINO">
           {[
-            { icon: 'folder_open', label: 'Divisão:', key: 'division' },
-            { icon: 'calendar_today', label: 'Frequência semanal:', key: 'weeklyFrequency' },
-            { icon: 'track_changes', label: 'Estratégia:', key: 'strategy' },
-            { icon: 'settings', label: 'Método:', key: 'method' },
-            { icon: 'timer', label: 'Descanso entre séries:', key: 'restBetweenSeries' },
-            { icon: 'schedule', label: 'Tempo sob tensão:', key: 'timeUnderTension' },
-          ].map(({ icon, label, key }) => (
+            { icon: 'folder_open', label: 'Divisão:', key: 'division', placeholder: 'Ex: ABC, ABCD...' },
+            { icon: 'calendar_today', label: 'Frequência semanal:', key: 'weeklyFrequency', placeholder: 'Ex: 4x por semana' },
+            { icon: 'timer', label: 'Descanso entre séries:', key: 'restBetweenSeries', placeholder: 'Ex: 60–90 seg' },
+            { icon: 'schedule', label: 'Tempo sob tensão:', key: 'timeUnderTension', placeholder: 'Ex: 2-0-2' },
+          ].map(({ icon, label, key, placeholder }) => (
             <FieldRow key={key} label={<><MI name={icon} style={{ color: gold, marginRight: 3 }} />{label}</>}>
               <FI
-                value={(data.trainingStructure as Record<string, string>)[key]}
+                value={(data.trainingStructure as Record<string, string>)[key] ?? ''}
                 onChange={v => setData({ trainingStructure: { ...data.trainingStructure, [key]: v } })}
+                placeholder={placeholder}
                 readOnly={readOnly}
               />
             </FieldRow>
           ))}
         </Card>
 
-        {/* 3. Periodização */}
-        <Card num="3" title="PERIODIZAÇÃO (MICROCICLO 4 SEMANAS)">
-          {data.periodization.weeks.map((w, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, borderBottom: '1px solid #1e1e1e', padding: '5px 0' }}>
-              <div style={{ background: gold, color: '#000', fontWeight: 900, fontSize: 8.5, padding: '3px 7px', borderRadius: 3, whiteSpace: 'nowrap', minWidth: 62, textAlign: 'center' }}>
-                {w.badge}
-              </div>
-              <div style={{ flex: 1 }}>
-                <FI value={w.title} onChange={v => { const weeks = [...data.periodization.weeks]; weeks[i] = { ...w, title: v }; setData({ periodization: { ...data.periodization, weeks } }) }} placeholder="Título" readOnly={readOnly} style={{ color: '#e0bc74', fontWeight: 700, fontSize: 9.5 }} />
-                <FI value={w.desc} onChange={v => { const weeks = [...data.periodization.weeks]; weeks[i] = { ...w, desc: v }; setData({ periodization: { ...data.periodization, weeks } }) }} placeholder="Descrição" readOnly={readOnly} style={{ color: '#888', fontSize: 9 }} />
-              </div>
-            </div>
-          ))}
-          <div style={{ marginTop: 8, background: '#1a1209', borderLeft: `3px solid ${gold}`, padding: '5px 8px', borderRadius: '0 3px 3px 0' }}>
-            <FI value={data.periodization.note} onChange={v => setData({ periodization: { ...data.periodization, note: v } })} placeholder="Nota pós-ciclo" readOnly={readOnly} style={{ fontSize: 9, color: '#888' }} />
-          </div>
-        </Card>
       </div>
 
       {/* ── TRAINING SECTIONS ── */}
@@ -266,11 +248,16 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
 
           {/* exercise table */}
           <div className="ws-table-wrap">
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 10, minWidth: 560 }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 10, minWidth: 460 }}>
               <thead>
                 <tr>
-                  {['#', 'EXERCÍCIO', 'SÉRIES', 'REPS', 'CADÊNCIA', 'DESCANSO', 'RIR', 'CARGA (KG)', 'REPS REAIS', 'ESFORÇO (0-10)', 'EXECUÇÃO / FOCO'].map((h, hi) => (
-                    <th key={hi} className={hi === 1 ? 'ws-sticky-name' : ''} style={{ ...thStyle, textAlign: hi <= 1 || hi === 10 ? 'left' : 'center', borderLeft: hi === 7 ? `2px solid ${gold}` : undefined, background: hi >= 7 && hi <= 9 ? '#1a1209' : '#252525' }}>
+                  {['#', 'EXERCÍCIO', 'SÉRIES', 'REPS', 'DESCANSO', 'CARGA (KG)', 'REPS REAIS', 'ESFORÇO (0-10)', 'EXECUÇÃO / FOCO'].map((h, hi) => (
+                    <th key={hi} className={hi === 1 ? 'ws-sticky-name' : ''} style={{
+                      ...thStyle,
+                      textAlign: hi <= 1 || hi === 8 ? 'left' : 'center',
+                      borderLeft: hi === 5 ? `2px solid ${gold}` : undefined,
+                      background: hi >= 5 && hi <= 7 ? '#1a1209' : '#252525',
+                    }}>
                       {h}
                     </th>
                   ))}
@@ -287,11 +274,13 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
                       <td className="ws-sticky-name-row" style={{ ...cell, minWidth: 140, background: rowBg }}>
                         <FI value={ex.name} onChange={v => { const ts = [...data.trainings]; ts[ti].exercises[ei] = { ...ex, name: v }; setData({ trainings: ts }) }} readOnly={readOnly} placeholder="Exercício" />
                       </td>
-                      {(['series', 'reps', 'cadence', 'rest', 'rir'] as const).map(f => (
+                      {/* template fields: series, reps, rest */}
+                      {(['series', 'reps', 'rest'] as const).map(f => (
                         <td key={f} style={{ ...cell, textAlign: 'center' }}>
-                          <FI value={(ex as unknown as Record<string, string>)[f]} onChange={v => { const ts = [...data.trainings]; (ts[ti].exercises[ei] as unknown as Record<string, string>)[f] = v; setData({ trainings: ts }) }} readOnly={readOnly} />
+                          <FI value={(ex as unknown as Record<string, string>)[f] ?? ''} onChange={v => { const ts = [...data.trainings]; (ts[ti].exercises[ei] as unknown as Record<string, string>)[f] = v; setData({ trainings: ts }) }} readOnly={readOnly} />
                         </td>
                       ))}
+                      {/* student record fields */}
                       <td style={{ ...cell, borderLeft: `2px solid ${gold}`, background: 'rgba(201,160,80,0.04)', textAlign: 'center' }}>
                         <RI value={rec.weight} onChange={v => setExRec(ex.id, 'weight', v)} />
                       </td>
@@ -302,7 +291,7 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
                         <RI value={rec.effort} onChange={v => setExRec(ex.id, 'effort', v)} />
                       </td>
                       <td style={{ ...cell, textAlign: 'left', color: '#888', fontSize: 9 }}>
-                        <FI value={ex.focus} onChange={v => { const ts = [...data.trainings]; ts[ti].exercises[ei] = { ...ex, focus: v }; setData({ trainings: ts }) }} readOnly={readOnly} placeholder="Foco" />
+                        <FI value={ex.focus ?? ''} onChange={v => { const ts = [...data.trainings]; ts[ti].exercises[ei] = { ...ex, focus: v }; setData({ trainings: ts }) }} readOnly={readOnly} placeholder="Foco de execução" />
                       </td>
                       {!readOnly && (
                         <td style={{ ...cell, textAlign: 'center', width: 28 }}>
@@ -396,13 +385,13 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
       {/* ── WEEKLY LOG ── */}
       <div style={{ background: '#111', border: '1px solid #333', borderRadius: 6, marginBottom: 12, overflow: 'hidden' }}>
         <div style={{ background: gold, color: '#000', fontWeight: 900, fontSize: 10, letterSpacing: 1, padding: '6px 12px', display: 'flex', alignItems: 'center', gap: 6 }}>
-          <NumBadge n="8" /> REGISTRO SEMANAL
+          <MI name="bar_chart" style={{ fontSize: 15 }} /> REGISTRO SEMANAL
         </div>
         <div className="ws-table-wrap">
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 10, minWidth: 560 }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 10, minWidth: 440 }}>
             <thead>
               <tr>
-                {['SEMANA', 'PESO (KG)', 'MEDIDAS (CM)', 'FOTOS', 'PERCEPÇÃO (0-10)', 'ENERGIA (0-10)', 'SONO (0-10)', 'OBSERVAÇÕES'].map((h, i) => (
+                {['SEMANA', 'PESO (KG)', 'MEDIDAS (CM)', 'PERCEPÇÃO (0-10)', 'ENERGIA (0-10)', 'SONO (0-10)', 'OBSERVAÇÕES'].map((h, i) => (
                   <th key={i} style={{ ...thStyle }}>{h}</th>
                 ))}
               </tr>
@@ -415,9 +404,9 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
                     <td style={{ ...cell, color: gold, fontWeight: 700, background: '#1c1c1c', paddingLeft: 10 }}>
                       Semana {i + 1}
                     </td>
-                    {(['weight', 'measurements', 'photos', 'perception', 'energy', 'sleep', 'notes'] as const).map(f => (
+                    {(['weight', 'measurements', 'perception', 'energy', 'sleep', 'notes'] as const).map(f => (
                       <td key={f} style={{ ...cell, textAlign: 'center' }}>
-                        <RI value={(wdata as unknown as Record<string, string>)[f]} onChange={v => setWeek(wk, f, v)} placeholder="—" />
+                        <RI value={(wdata as unknown as Record<string, string>)[f] ?? ''} onChange={v => setWeek(wk, f, v)} placeholder="—" />
                       </td>
                     ))}
                   </tr>
@@ -431,7 +420,7 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
       {/* ── ADJUSTMENTS ── */}
       <div style={{ background: '#111', border: '1px solid #333', borderRadius: 6, marginBottom: 12, overflow: 'hidden' }}>
         <div style={{ background: gold, color: '#000', fontWeight: 900, fontSize: 10, letterSpacing: 1, padding: '5px 10px', display: 'flex', alignItems: 'center', gap: 6 }}>
-          <NumBadge n="9" /> AJUSTES E ACOMPANHAMENTO
+          <MI name="tune" style={{ fontSize: 15 }} /> AJUSTES E ACOMPANHAMENTO
         </div>
         <div style={{ padding: 10, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
           {([

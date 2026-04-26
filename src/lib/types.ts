@@ -13,9 +13,7 @@ export interface Exercise {
   name: string
   series: string
   reps: string
-  cadence: string
   rest: string
-  rir: string
   focus: string
 }
 
@@ -26,23 +24,16 @@ export interface TrainingSection {
   exercises: Exercise[]
 }
 
-export interface WeekPeriod {
-  badge: string
-  title: string
-  desc: string
-}
 
 export interface TemplateData {
   studentInfo: {
     name: string; age: string; heightWeight: string; mainGoal: string
-    level: string; trainingTime: string; injuries: string
-    availableDays: string; sessionTime: string
+    level: string; injuries: string; availableDays: string; sessionTime: string
   }
   trainingStructure: {
-    division: string; weeklyFrequency: string; strategy: string
-    method: string; restBetweenSeries: string; timeUnderTension: string
+    division: string; weeklyFrequency: string
+    restBetweenSeries: string; timeUnderTension: string
   }
-  periodization: { weeks: WeekPeriod[]; note: string }
   trainings: TrainingSection[]
   progression: string[]
   cardio: { frequency: string; duration: string; intensity: string; modality: string; note: string }
@@ -59,7 +50,7 @@ export interface ExerciseRecord {
 }
 
 export interface WeekLog {
-  weight: string; measurements: string; photos: string
+  weight: string; measurements: string
   perception: string; energy: string; sleep: string; notes: string
 }
 
@@ -100,38 +91,28 @@ export interface StudentRecord {
 export const DEFAULT_TEMPLATE: TemplateData = {
   studentInfo: {
     name: '', age: '', heightWeight: '', mainGoal: '',
-    level: '', trainingTime: '', injuries: '', availableDays: '', sessionTime: '',
+    level: '', injuries: '', availableDays: '', sessionTime: '',
   },
   trainingStructure: {
-    division: '', weeklyFrequency: '', strategy: '',
-    method: '', restBetweenSeries: '', timeUnderTension: '',
-  },
-  periodization: {
-    weeks: [
-      { badge: 'SEMANA 1', title: '', desc: '' },
-      { badge: 'SEMANA 2', title: '', desc: '' },
-      { badge: 'SEMANA 3', title: '', desc: '' },
-      { badge: 'SEMANA 4', title: '', desc: '' },
-    ],
-    note: '',
+    division: '', weeklyFrequency: '', restBetweenSeries: '', timeUnderTension: '',
   },
   trainings: [
     {
       label: 'TREINO A', name: 'PEITO • OMBRO • TRÍCEPS', color: '#c9a050',
       exercises: Array.from({ length: 6 }, (_, i) => ({
-        id: `a${i + 1}`, name: '', series: '', reps: '', cadence: '', rest: '', rir: '', focus: '',
+        id: `a${i + 1}`, name: '', series: '', reps: '', rest: '', focus: '',
       })),
     },
     {
       label: 'TREINO B', name: 'COSTAS • BÍCEPS', color: '#4da6c8',
       exercises: Array.from({ length: 6 }, (_, i) => ({
-        id: `b${i + 1}`, name: '', series: '', reps: '', cadence: '', rest: '', rir: '', focus: '',
+        id: `b${i + 1}`, name: '', series: '', reps: '', rest: '', focus: '',
       })),
     },
     {
       label: 'TREINO C', name: 'PERNA COMPLETA', color: '#4dc87a',
       exercises: Array.from({ length: 6 }, (_, i) => ({
-        id: `c${i + 1}`, name: '', series: '', reps: '', cadence: '', rest: '', rir: '', focus: '',
+        id: `c${i + 1}`, name: '', series: '', reps: '', rest: '', focus: '',
       })),
     },
   ],
