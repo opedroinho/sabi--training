@@ -129,7 +129,7 @@ export function StudentWorkoutView({ studentName, assignment, template, initialR
               <span className="material-icons-outlined" style={{ fontSize: 20 }}>arrow_back</span>
             </button>
           ) : (
-            <span style={{ fontSize: 18, fontWeight: 900, color: gold, border: `2px solid ${gold}`, padding: '2px 7px', borderRadius: 4, letterSpacing: -1, flexShrink: 0 }}>WS</span>
+            <img src="/sabia-logo.svg" alt="Wilson Sabiá" style={{ height: 30, flexShrink: 0 }} />
           )}
 
           <div style={{ flex: 1, minWidth: 0 }}>

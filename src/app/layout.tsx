@@ -3,13 +3,13 @@ import './globals.css'
 import { SwRegister } from '@/components/SwRegister'
 
 export const metadata: Metadata = {
-  title: 'Wilson Sabiá — Treinos',
+  title: 'Sabiá Personal Trainer',
   description: 'Sua planilha de treino personalizada',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'WS Treinos',
+    title: 'Sabiá',
   },
 }
 

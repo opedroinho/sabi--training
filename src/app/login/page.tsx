@@ -32,18 +32,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div
-            className="inline-block text-4xl font-black mb-2 px-4 py-2 rounded"
-            style={{ color: '#c9a050', border: '2px solid #c9a050', letterSpacing: '-2px' }}
-          >
-            WS
-          </div>
-          <div className="text-xs font-bold tracking-widest mt-1" style={{ color: '#c9a050' }}>
-            WILSON SABIÁ
-          </div>
-          <div className="text-xs tracking-widest mt-0.5" style={{ color: '#666' }}>
-            PERSONAL TRAINER
-          </div>
+          <img src="/sabia-logo.svg" alt="Wilson Sabiá Personal Trainer" style={{ height: 72, margin: '0 auto', display: 'block' }} />
         </div>
 
         {/* Card */}

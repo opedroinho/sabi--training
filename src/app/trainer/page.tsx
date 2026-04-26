@@ -33,9 +33,8 @@ export default async function TrainerDashboard() {
         background: '#111', borderBottom: `2px solid ${gold}`,
         padding: '10px 20px', display: 'flex', alignItems: 'center', gap: 12,
       }}>
-        <span style={{ fontSize: 20, fontWeight: 900, color: gold, border: `2px solid ${gold}`, padding: '2px 8px', borderRadius: 4, letterSpacing: -1 }}>WS</span>
+        <img src="/sabia-logo.svg" alt="Wilson Sabiá" style={{ height: 34, flexShrink: 0 }} />
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: gold, letterSpacing: 1 }}>WILSON SABIÁ</div>
           <div style={{ fontSize: 10, color: '#555' }}>Dashboard do Trainer</div>
         </div>
         <span style={{ fontSize: 11, color: '#666' }}>{profile?.name}</span>
