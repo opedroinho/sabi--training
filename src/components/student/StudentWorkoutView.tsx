@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { TemplateData, StudentRecordData, TrainingSection } from '@/lib/types'
 import { createClient } from '@/lib/supabase/client'
 import { LogoutButton } from '@/components/LogoutButton'
+import { InstallPwaButton } from '@/components/InstallPwaButton'
 
 const gold = '#c9a050'
 const EMPTY_RECORD: StudentRecordData = { exercises: {}, weeklyLog: {} }
@@ -302,6 +303,9 @@ function DashboardView({ d, onSelectTraining, onOpenWeekly, onOpenProfile }: {
           </button>
         ))}
       </div>
+
+      {/* Install PWA */}
+      <InstallPwaButton />
 
       {/* Weekly log button */}
       <button
