@@ -21,6 +21,8 @@ interface Props {
 type Modal =
   | { type: 'set-active'; template: Template }
   | { type: 'toggle-status'; newStatus: 'active' | 'inactive' }
+  | { type: 'delete-student' }
+  | { type: 'delete-template'; template: Template }
   | null
 
 export function StudentDetailClient({ trainerId, student, templates, activeTemplateId, assignmentId }: Props) {
@@ -65,6 +67,39 @@ export function StudentDetailClient({ trainerId, student, templates, activeTempl
       p_new_status: newStatus,
     })
     if (error) { setError(error.message); setLoading(false); return }
+    setModal(null)
+    setLoading(false)
+    router.refresh()
+  }
+
+  // ── Delete student ───────────────────────────────────────────────────────────
+  async function confirmDeleteStudent() {
+    setLoading(true)
+    setError(null)
+    const res = await fetch('/api/students', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ studentId: student.id }),
+    })
+    const json = await res.json()
+    if (!res.ok) { setError(json.error ?? 'Erro ao excluir aluno.'); setLoading(false); return }
+    router.push('/trainer')
+  }
+
+  // ── Delete template ──────────────────────────────────────────────────────────
+  async function confirmDeleteTemplate(template: Template) {
+    setLoading(true)
+    setError(null)
+    const supabase = createClient()
+
+    // Remove from assignment if this is the active template
+    if (template.id === activeTemplateId && assignmentId) {
+      await supabase.from('assignments').delete().eq('id', assignmentId)
+    }
+
+    const { error } = await supabase.from('templates').delete().eq('id', template.id)
+    if (error) { setError(error.message); setLoading(false); return }
+
     setModal(null)
     setLoading(false)
     router.refresh()
@@ -117,18 +152,32 @@ export function StudentDetailClient({ trainerId, student, templates, activeTempl
             </div>
           </div>
 
-          <button
-            onClick={() => setModal({ type: 'toggle-status', newStatus: isActive ? 'inactive' : 'active' })}
-            style={{
-              background: 'transparent',
-              border: `1px solid ${isActive ? '#555' : '#4dc87a'}`,
-              color: isActive ? '#888' : '#4dc87a',
-              padding: '7px 14px', borderRadius: 6, fontSize: 11,
-              fontWeight: 700, cursor: 'pointer', letterSpacing: 0.5,
-            }}
-          >
-            {isActive ? 'INATIVAR ALUNO' : 'REATIVAR ALUNO'}
-          </button>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <button
+              onClick={() => setModal({ type: 'toggle-status', newStatus: isActive ? 'inactive' : 'active' })}
+              style={{
+                background: 'transparent',
+                border: `1px solid ${isActive ? '#555' : '#4dc87a'}`,
+                color: isActive ? '#888' : '#4dc87a',
+                padding: '7px 14px', borderRadius: 6, fontSize: 11,
+                fontWeight: 700, cursor: 'pointer', letterSpacing: 0.5,
+              }}
+            >
+              {isActive ? 'INATIVAR' : 'REATIVAR'}
+            </button>
+            <button
+              onClick={() => setModal({ type: 'delete-student' })}
+              style={{
+                background: 'transparent', border: '1px solid #4a1a1a',
+                color: '#e05a5a', padding: '7px 12px', borderRadius: 6,
+                fontSize: 11, fontWeight: 700, cursor: 'pointer',
+                display: 'flex', alignItems: 'center', gap: 4,
+              }}
+            >
+              <span className="material-icons-outlined" style={{ fontSize: 14 }}>delete</span>
+              EXCLUIR
+            </button>
+          </div>
         </div>
 
         {error && (
@@ -214,6 +263,20 @@ export function StudentDetailClient({ trainerId, student, templates, activeTempl
                   >
                     EDITAR
                   </Link>
+                  <button
+                    onClick={() => setModal({ type: 'delete-template', template: t })}
+                    title="Excluir treino"
+                    style={{
+                      background: 'transparent', border: '1px solid #2a1a1a',
+                      color: '#7a3a3a', padding: '5px 8px', borderRadius: 5,
+                      fontSize: 10, cursor: 'pointer', display: 'flex', alignItems: 'center',
+                      transition: 'border-color 0.15s, color 0.15s',
+                    }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#e05a5a'; (e.currentTarget as HTMLButtonElement).style.color = '#e05a5a' }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#2a1a1a'; (e.currentTarget as HTMLButtonElement).style.color = '#7a3a3a' }}
+                  >
+                    <span className="material-icons-outlined" style={{ fontSize: 14 }}>delete_outline</span>
+                  </button>
                 </div>
               </div>
             )
@@ -249,6 +312,49 @@ export function StudentDetailClient({ trainerId, student, templates, activeTempl
                   </button>
                   <button onClick={() => confirmSetActive(modal.template)} disabled={loading} style={{ background: gold, color: '#000', border: 'none', padding: '8px 18px', borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1 }}>
                     {loading ? 'SALVANDO...' : 'CONFIRMAR'}
+                  </button>
+                </div>
+              </>
+            )}
+
+            {modal.type === 'delete-student' && (
+              <>
+                <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: '#e05a5a', marginBottom: 12 }}>EXCLUIR ALUNO</div>
+                <p style={{ fontSize: 13, color: '#ccc', marginBottom: 6 }}>
+                  Tem certeza que deseja excluir <strong style={{ color: '#fff' }}>{student.name}</strong>?
+                </p>
+                <p style={{ fontSize: 11, color: '#666', marginBottom: 24 }}>
+                  Esta ação é irreversível. O aluno, seus treinos atribuídos e todo o histórico serão permanentemente removidos.
+                </p>
+                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+                  <button onClick={() => setModal(null)} disabled={loading} style={{ background: 'transparent', border: '1px solid #333', color: '#888', padding: '8px 18px', borderRadius: 6, fontSize: 11, cursor: 'pointer' }}>
+                    CANCELAR
+                  </button>
+                  <button onClick={confirmDeleteStudent} disabled={loading} style={{ background: '#e05a5a', color: '#fff', border: 'none', padding: '8px 18px', borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1 }}>
+                    {loading ? 'EXCLUINDO...' : 'EXCLUIR DEFINITIVAMENTE'}
+                  </button>
+                </div>
+              </>
+            )}
+
+            {modal.type === 'delete-template' && (
+              <>
+                <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: '#e05a5a', marginBottom: 12 }}>EXCLUIR TREINO</div>
+                <p style={{ fontSize: 13, color: '#ccc', marginBottom: 6 }}>
+                  Excluir o treino <strong style={{ color: '#fff' }}>{modal.template.name}</strong>?
+                </p>
+                <p style={{ fontSize: 11, color: '#666', marginBottom: 24 }}>
+                  {modal.template.id === activeTemplateId
+                    ? 'Este é o treino ativo do aluno. Ele será removido e o aluno ficará sem treino atribuído.'
+                    : 'Esta ação é irreversível e não pode ser desfeita.'
+                  }
+                </p>
+                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+                  <button onClick={() => setModal(null)} disabled={loading} style={{ background: 'transparent', border: '1px solid #333', color: '#888', padding: '8px 18px', borderRadius: 6, fontSize: 11, cursor: 'pointer' }}>
+                    CANCELAR
+                  </button>
+                  <button onClick={() => confirmDeleteTemplate(modal.template)} disabled={loading} style={{ background: '#e05a5a', color: '#fff', border: 'none', padding: '8px 18px', borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1 }}>
+                    {loading ? 'EXCLUINDO...' : 'EXCLUIR TREINO'}
                   </button>
                 </div>
               </>
