@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { LogoutButton } from '@/components/LogoutButton'
 import { CreateStudentForm } from '@/components/trainer/CreateStudentForm'
 import { StudentGrid } from '@/components/trainer/StudentGrid'
+import { InstallPwaButton } from '@/components/InstallPwaButton'
 
 const gold = '#c9a050'
 
@@ -54,6 +55,7 @@ export default async function TrainerDashboard() {
 
           {/* ── ADD STUDENT (right, 1/3) ── */}
           <div className="ws-dashboard-form" style={{ position: 'sticky', top: 72 }}>
+            <InstallPwaButton />
             <CreateStudentForm />
           </div>
 
