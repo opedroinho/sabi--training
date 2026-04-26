@@ -66,6 +66,7 @@ body {
 .ws-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
 /* Sticky exercise name only — no gap between columns */
+.ws-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .ws-sticky-name     { position: sticky; left: 0; z-index: 2; background: #252525; border-right: 2px solid #444 !important; }
 .ws-sticky-name-row { position: sticky; left: 0; z-index: 1; border-right: 2px solid #444 !important; }
 
@@ -78,6 +79,7 @@ body {
 .ws-footer-motto { color: #c9a050; font-weight: 900; font-size: 11px; letter-spacing: 2px; flex-shrink: 0; }
 
 @media (max-width: 860px) {
+  .ws-grid-2 { grid-template-columns: 1fr; }
   .ws-grid-3 { grid-template-columns: 1fr; }
   .ws-grid-4 { grid-template-columns: 1fr 1fr; }
 }
