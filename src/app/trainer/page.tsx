@@ -3,6 +3,7 @@ import { LogoutButton } from '@/components/LogoutButton'
 import { CreateStudentForm } from '@/components/trainer/CreateStudentForm'
 import { StudentGrid } from '@/components/trainer/StudentGrid'
 import { InstallPwaButton } from '@/components/InstallPwaButton'
+import { SabiaWordmark } from '@/components/SabiaWordmark'
 
 const gold = '#c9a050'
 
@@ -33,7 +34,7 @@ export default async function TrainerDashboard() {
         background: '#111', borderBottom: `2px solid ${gold}`,
         padding: '10px 20px', display: 'flex', alignItems: 'center', gap: 12,
       }}>
-        <img src="/sabia-logo.svg" alt="Wilson Sabiá" style={{ height: 34, flexShrink: 0 }} />
+        <SabiaWordmark height={34} style={{ flexShrink: 0 }} />
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 10, color: '#555' }}>Dashboard do Trainer</div>
         </div>

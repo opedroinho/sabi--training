@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { SabiaWordmark } from '@/components/SabiaWordmark'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -32,7 +33,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-8">
-          <img src="/sabia-logo.svg" alt="Wilson Sabiá Personal Trainer" style={{ height: 72, margin: '0 auto', display: 'block' }} />
+          <SabiaWordmark height={72} style={{ margin: '0 auto' }} />
         </div>
 
         {/* Card */}
