@@ -41,18 +41,22 @@ export default async function TrainerDashboard() {
         <LogoutButton />
       </div>
 
-      <div style={{ maxWidth: 1000, margin: '0 auto', padding: '24px 16px' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 16px' }}>
+        <div className="ws-dashboard">
 
-        {/* ── CREATE STUDENT ── */}
-        <CreateStudentForm />
-
-        {/* ── STUDENT CARDS ── */}
-        <div style={{ marginTop: 32 }}>
-          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 3, color: '#555', marginBottom: 14 }}>
-            ALUNOS {students?.length ? `(${students.length})` : ''}
+          {/* ── STUDENT CARDS (left, 2/3) ── */}
+          <div className="ws-dashboard-students">
+            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 3, color: '#555', marginBottom: 14 }}>
+              ALUNOS {students?.length ? `(${students.length})` : ''}
+            </div>
+            <StudentGrid students={students ?? []} activeTraining={activeTraining} />
           </div>
 
-          <StudentGrid students={students ?? []} activeTraining={activeTraining} />
+          {/* ── ADD STUDENT (right, 1/3) ── */}
+          <div className="ws-dashboard-form" style={{ position: 'sticky', top: 72 }}>
+            <CreateStudentForm />
+          </div>
+
         </div>
       </div>
     </div>
