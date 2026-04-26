@@ -24,9 +24,8 @@ export default async function StudentPage() {
           background: '#111', borderBottom: '2px solid #333',
           padding: '10px 20px', display: 'flex', alignItems: 'center', gap: 10,
         }}>
-          <span style={{ fontSize: 18, fontWeight: 900, color: '#555', border: '2px solid #333', padding: '2px 8px', borderRadius: 4, letterSpacing: -1 }}>WS</span>
+          <img src="/sabia-logo.svg" alt="Wilson Sabiá" style={{ height: 30, flexShrink: 0, opacity: 0.4 }} />
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#555' }}>WILSON SABIÁ</div>
             <div style={{ fontSize: 10, color: '#444' }}>{profile?.name}</div>
           </div>
           <LogoutButton />

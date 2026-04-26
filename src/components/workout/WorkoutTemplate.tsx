@@ -145,12 +145,8 @@ export function WorkoutTemplate({ data, record, readOnly, onDataChange, onRecord
         background: '#111', border: '1px solid #c9a050', borderRadius: 6,
         padding: '14px 20px', marginBottom: 14,
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ fontSize: 36, fontWeight: 900, color: gold, border: `2px solid ${gold}`, padding: '4px 10px', borderRadius: 4, letterSpacing: -2, flexShrink: 0 }}>WS</div>
-          <div>
-            <div style={{ color: gold, fontSize: 11, fontWeight: 700, letterSpacing: 1.5 }}>WILSON SABIÁ</div>
-            <div style={{ color: '#888', fontSize: 9, letterSpacing: 2 }}>PERSONAL TRAINER</div>
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <img src="/sabia-logo.svg" alt="Wilson Sabiá Personal Trainer" style={{ height: 52, flexShrink: 0 }} />
         </div>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: 22, fontWeight: 900, color: gold, letterSpacing: 3, lineHeight: 1.1 }}>
